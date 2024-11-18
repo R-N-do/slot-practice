@@ -1,0 +1,163 @@
+{\rtf1\ansi\ansicpg932\cocoartf2818
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="en">\
+<head>\
+  <meta charset="UTF-8">\
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+  <title>\uc0\u12522 \u12450 \u12523 \u30446 \u25276 \u12375 \u32244 \u32722 \u12450 \u12503 \u12522 </title>\
+  <style>\
+    body \{\
+      font-family: Arial, sans-serif;\
+      text-align: center;\
+      margin: 20px;\
+    \}\
+    .reel-container \{\
+      display: flex;\
+      justify-content: center;\
+      gap: 10px;\
+    \}\
+    .reel \{\
+      width: 100px;\
+      height: 100px;\
+      border: 2px solid black;\
+      overflow: hidden;\
+      position: relative;\
+      font-size: 2rem;\
+      display: flex;\
+      align-items: center;\
+      justify-content: center;\
+    \}\
+    .stop-button \{\
+      padding: 10px 20px;\
+      font-size: 1rem;\
+      margin: 20px 10px;\
+      cursor: pointer;\
+    \}\
+    .score \{\
+      margin-top: 20px;\
+      font-size: 1.2rem;\
+    \}\
+    .settings \{\
+      margin: 20px;\
+    \}\
+    .settings label \{\
+      margin-right: 10px;\
+    \}\
+  </style>\
+</head>\
+<body>\
+  <h1>\uc0\u12522 \u12450 \u12523 \u30446 \u25276 \u12375 \u32244 \u32722 \u12450 \u12503 \u12522 </h1>\
+\
+  <!-- \uc0\u35373 \u23450 \u12456 \u12522 \u12450  -->\
+  <div class="settings">\
+    <label>\uc0\u12522 \u12540 \u12523 \u36895 \u24230 :\
+      <input type="range" id="speedControl" min="50" max="300" value="100">\
+    </label>\
+    <label>\uc0\u32117 \u26564 :\
+      <input type="text" id="symbolsInput" value="\uc0\u55356 \u57170 ,7\u65039 \u8419 ,\u11088 ">\
+    </label>\
+    <button id="applySettings">\uc0\u35373 \u23450 \u12434 \u21453 \u26144 </button>\
+  </div>\
+\
+  <!-- \uc0\u12522 \u12540 \u12523 \u12456 \u12522 \u12450  -->\
+  <div class="reel-container">\
+    <div class="reel" id="reel1"></div>\
+    <div class="reel" id="reel2"></div>\
+    <div class="reel" id="reel3"></div>\
+  </div>\
+\
+  <!-- \uc0\u12508 \u12479 \u12531 \u12456 \u12522 \u12450  -->\
+  <div>\
+    <button class="stop-button" id="stopButton1">\uc0\u24038 \u20572 \u27490 </button>\
+    <button class="stop-button" id="stopButton2">\uc0\u20013 \u20572 \u27490 </button>\
+    <button class="stop-button" id="stopButton3">\uc0\u21491 \u20572 \u27490 </button>\
+  </div>\
+\
+  <!-- \uc0\u12473 \u12467 \u12450 \u12456 \u12522 \u12450  -->\
+  <div class="score" id="score">\uc0\u12473 \u12467 \u12450 : 0</div>\
+\
+  <script>\
+    let reelSpeeds = [100, 100, 100];\
+    let isSpinning = [true, true, true];\
+    let reelPositions = [0, 0, 0];\
+    let symbols = ['\uc0\u55356 \u57170 ', '7\u65039 \u8419 ', '\u11088 '];\
+    let score = 0;\
+\
+    // \uc0\u12522 \u12540 \u12523 \u12372 \u12392 \u12398 \u12479 \u12452 \u12510 \u12540 \u12434 \u20445 \u25345 \
+    let reelTimers = [];\
+\
+    // \uc0\u21508 \u12522 \u12540 \u12523 \u12398 \u22238 \u36578 \u21046 \u24481 \
+    function spinReel(reelId, speed) \{\
+      const reelElement = document.getElementById(reelId);\
+      reelTimers[reelId] = setInterval(() => \{\
+        if (isSpinning[reelId]) \{\
+          reelPositions[reelId] = (reelPositions[reelId] + 1) % symbols.length;\
+          reelElement.innerText = symbols[reelPositions[reelId]];\
+        \}\
+      \}, speed);\
+    \}\
+\
+    // \uc0\u12522 \u12540 \u12523 \u21021 \u26399 \u21270 \
+    function initReels() \{\
+      spinReel("reel1", reelSpeeds[0]);\
+      spinReel("reel2", reelSpeeds[1]);\
+      spinReel("reel3", reelSpeeds[2]);\
+    \}\
+\
+    // \uc0\u12522 \u12540 \u12523 \u20572 \u27490 \u12508 \u12479 \u12531 \
+    function stopReel(reelId) \{\
+      isSpinning[reelId] = false;\
+      clearInterval(reelTimers[reelId]);\
+      checkWin();\
+    \}\
+\
+    // \uc0\u24403 \u12383 \u12426 \u21028 \u23450 \
+    function checkWin() \{\
+      if (!isSpinning[0] && !isSpinning[1] && !isSpinning[2]) \{\
+        const winPatterns = [\
+          [0, 0, 0], // \uc0\u27178 \
+          [1, 1, 1], // \uc0\u27178 \
+          [2, 2, 2], // \uc0\u27178 \
+          [0, 1, 2], // \uc0\u26012 \u12417 \
+          [2, 1, 0], // \uc0\u26012 \u12417 \
+        ];\
+        for (let pattern of winPatterns) \{\
+          if (\
+            symbols[reelPositions[0]] === symbols[pattern[0]] &&\
+            symbols[reelPositions[1]] === symbols[pattern[1]] &&\
+            symbols[reelPositions[2]] === symbols[pattern[2]]\
+          ) \{\
+            alert("\uc0\u25104 \u21151 \u65281 ");\
+            score++;\
+            document.getElementById('score').innerText = `\uc0\u12473 \u12467 \u12450 : $\{score\}`;\
+            return;\
+          \}\
+        \}\
+        alert("\uc0\u22833 \u25943 \u65281 ");\
+      \}\
+    \}\
+\
+    // \uc0\u35373 \u23450 \u21453 \u26144 \
+    document.getElementById('applySettings').addEventListener('click', () => \{\
+      reelSpeeds = Array(3).fill(parseInt(document.getElementById('speedControl').value));\
+      symbols = document.getElementById('symbolsInput').value.split(',');\
+      alert("\uc0\u35373 \u23450 \u12434 \u21453 \u26144 \u12375 \u12414 \u12375 \u12383 \u65281 ");\
+    \});\
+\
+    // \uc0\u12508 \u12479 \u12531 \u12452 \u12505 \u12531 \u12488 \
+    document.getElementById('stopButton1').addEventListener('click', () => stopReel(0));\
+    document.getElementById('stopButton2').addEventListener('click', () => stopReel(1));\
+    document.getElementById('stopButton3').addEventListener('click', () => stopReel(2));\
+\
+    // \uc0\u21021 \u26399 \u21270 \
+    initReels();\
+  </script>\
+</body>\
+</html>\
+}
